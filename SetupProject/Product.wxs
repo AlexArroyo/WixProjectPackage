@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="663FE9A2-435B-4916-A329-FCAA993D3A91" Name="SetupProject" Language="1033" Version="1.0.0.0" Manufacturer="Roche Diagnostics"
+    UpgradeCode="d104ee2f-ee1a-4771-8fee-569f21128b0f">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate />
+
+    <Feature Id="ProductFeature" Title="SetupProject" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="ApplicationShortcutDesktop" />
+    </Feature>
+    <!-- Condition to trigger the installer -->
+    <Condition Message="This application only runs on Windows Server 2016 or Windows 10">
+      <![CDATA[VersionNT>=603]]>
+    </Condition>
+    
+    <Condition Message="You need to be an administrator to install this product.">
+      Privileged
+    </Condition>
+    <!-- Add UI control to the installer -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <UIRef Id="WixUI_Mondo" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <CustomAction Id="SetCustomDataValue"
+               Property="myCustomActionId" Value="INSTALLFOLDER=[INSTALLFOLDER];AnotherValue=MyCustomAction" />
+    
+    <Binary Id="MyCustomAction" SourceFile="..\CustomAction\bin\Debug\CustomAction.CA.dll"/>
+    <CustomAction Id='myCustomActionId' BinaryKey="MyCustomAction" DllEntry="CustomSetupLibrary" Return="check" />
+
+    <InstallExecuteSequence>
+      <Custom Action='SetCustomDataValue' Before="myCustomActionId">NOT Installed</Custom>
+      <Custom Action='myCustomActionId' After='InstallFinalize'  />
+    </InstallExecuteSequence>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="SetupProject" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="FooBar"/>
+      </Directory>
+      <Directory Id="DesktopFolder" SourceName="Desktop"/>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id='MainExecutable' Guid='27CCAE03-0102-420E-B344-37DCFEED2491'>
+        <File Id='FoobarEXE' Name='Foobar.exe' Source='..\Foobar\bin\Debug\Foobar.exe' KeyPath='yes'/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

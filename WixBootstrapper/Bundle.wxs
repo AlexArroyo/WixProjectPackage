@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Bundle Name="WixBootstrapper" Version="1.0.0.0" Manufacturer="Roche Diagnostics" UpgradeCode="837c4e67-0255-4fa5-8fda-5410d3a03d68">
+		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
+
+		<Chain>
+			<!-- TODO: Define the list of chained packages. -->
+			<MsiPackage SourceFile="..\SetupProject\bin\Debug\SetupProject.msi" />
+		</Chain>
+	</Bundle>
+</Wix>
